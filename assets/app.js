@@ -17,8 +17,8 @@ class BasicPageInteractions {
     this.handleNavbarScroll();
 
     // Navigation menu clicks
-    const navLinks = document.querySelectorAll(".nav-links a");
-    navLinks.forEach((link) => {
+    const navLinksList = document.querySelectorAll(".nav-links a");
+    navLinksList.forEach((link) => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
         const targetId = link.getAttribute("href");
@@ -53,6 +53,21 @@ class BasicPageInteractions {
     if (newsletterForm) {
       newsletterForm.addEventListener("submit", (e) => {
         this.handleNewsletterSubmission(e);
+      });
+    }
+
+    // Mobile Navbar Toggle
+    const navToggle = document.querySelector(".nav-toggle");
+    const navLinks = document.querySelector(".nav-links");
+    if (navToggle && navLinks) {
+      navToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("open");
+      });
+      // Optional: close menu when a link is clicked
+      navLinks.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("open");
+        });
       });
     }
   }
@@ -388,6 +403,40 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "auto";
     document.body.classList.add("loaded");
   }, 100);
+
+  // Smooth scroll to top for footer back-to-top button
+  const backToTop = document.getElementById("footer-backtotop");
+  if (backToTop) {
+    backToTop.addEventListener("click", function (e) {
+      e.preventDefault();
+      // Custom smooth scroll function
+      const duration = 800; // Duration in milliseconds
+      const start = window.pageYOffset;
+      const startTime =
+        "now" in window.performance ? performance.now() : new Date().getTime();
+
+      function scroll() {
+        const currentTime =
+          "now" in window.performance
+            ? performance.now()
+            : new Date().getTime();
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+
+        // Easing function for smoother animation
+        const easeInOutQuad = (t) =>
+          t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+        window.scrollTo(0, start * (1 - easeInOutQuad(progress)));
+
+        if (timeElapsed < duration) {
+          requestAnimationFrame(scroll);
+        }
+      }
+
+      requestAnimationFrame(scroll);
+    });
+  }
 });
 
 // Handle window resize
